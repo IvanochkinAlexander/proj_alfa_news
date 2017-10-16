@@ -197,8 +197,8 @@ def send_to_telegram(i, m, c):
     """Send appropriate links to telegram channel"""
 
     bot = telegram.Bot(token='379005601:AAH1rv3ESXLWTXbn14gnCxW52eeKc4qnw50')
-    chat_id = -1001111732295
-    # chat_id = 169719023
+    # chat_id = -1001111732295
+    chat_id = 169719023
     bot.send_message(chat_id=chat_id, text=\
                      'Страна:' + '\n' + '{}'.format(c) + "\n" + \
                      'Tags:' + "\n"+ '{}'.format(i) + "\n" + \
@@ -389,7 +389,7 @@ while True:
         parsed_df_new = pd.concat([parsed_df, concated_sims[['link', 'text']]], axis=0)
         parsed_df_new.to_excel('../output/alfa_news/parsed.xlsx')
         print ('finished iteration')
-    if(now.hour==11):
+    if(now.hour==11):##11
         print("bloop")
         l='uk-en'
         t='bank news'
@@ -453,4 +453,4 @@ while True:
         parsed_df_new = pd.concat([parsed_df, concated_sims[['link', 'text']]], axis=0)
         parsed_df_new.to_excel('../output/alfa_news/parsed.xlsx')
         print ('finished iteration')
-    time.sleep(3600)
+    time.sleep(3599)
