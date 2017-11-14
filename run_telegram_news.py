@@ -40,6 +40,7 @@ def get_links (t, l):
 
     links=[]
     links_alfa = []
+    links_df = pd.DataFrame()
 
     print (l,t)
     t= urllib.request.quote(t.encode('utf8'))
@@ -147,7 +148,7 @@ def wrk_words_wt_no(sent):
     except TypeError:
         pass
 
-def find_keywords (text_df):
+def find_keywords (text_df, links_df):
 
     """Find keywords to filter approppriate links"""
 
@@ -197,12 +198,13 @@ def send_to_telegram(i, m, c):
     """Send appropriate links to telegram channel"""
 
     bot = telegram.Bot(token='379005601:AAH1rv3ESXLWTXbn14gnCxW52eeKc4qnw50')
-    # chat_id = -1001111732295
-    chat_id = 169719023
+    chat_id = -1001111732295
+    # chat_id = 169719023
     bot.send_message(chat_id=chat_id, text=\
                      'Страна:' + '\n' + '{}'.format(c) + "\n" + \
                      'Tags:' + "\n"+ '{}'.format(i) + "\n" + \
                      '{}'.format(m))
+    time.sleep(2)
 
 def review_to_wordlist(review):
 
@@ -343,7 +345,6 @@ to_search = [
 'latest',
 'brand-new',
 'unique',
-'recent',
 'leading',
 'machine',
 'robotics',
@@ -354,103 +355,179 @@ to_search = [
 'intelligence'
 ]
 
+browser = webdriver.PhantomJS(executable_path='/../usr/local/bin/phantomjs')
+morph = MorphAnalyzer()
+russian_stops = stopwords.words('russian')
+english_stops = stopwords.words('english')
+
+
+def run_russia ():
+
+    print("bleep")
+    l='ru-ru'
+    t='банк news'
+    c = 'В России 10 часов утра'
+
+    for i in range(2):
+
+        links_df = pd.DataFrame()
+        try:
+            links_df = get_links(t,l)
+        except:
+            pass
+        print ('длина составляет {}'.format(links_df.shape[0]))
+
+    if l =='ru-ru':
+        text_df = parse_links_ru(links_df)
+    else:
+        text_df = parse_links(links_df)
+
+    concated_df = find_keywords(text_df, links_df)
+    concated_exclude, temp_exclude = to_exclude_text(concated_df)
+    concated_cut = concated_exclude[(concated_exclude[0]!='') & (~concated_exclude[0].isnull())].reset_index(drop=True)
+    concated_sims = del_interntal_duplicates(concated_cut)
+    parsed_df = pd.read_excel('../output/alfa_news/parsed.xlsx')
+    parsed_links = parsed_df['link']
+    concated_sims = concated_sims[~concated_sims['link'].isin(parsed_links)]
+    concated_sims['country'] = c
+    for i, m, c in zip ( concated_sims[0], concated_sims['link'], concated_sims['country']):
+        send_to_telegram(i, m, c)
+        time.sleep(5)
+    parsed_df_new = pd.concat([parsed_df, concated_sims[['link', 'text']]], axis=0)
+    parsed_df_new.to_excel('../output/alfa_news/parsed.xlsx')
+    print ('finished iteration')
+
+
+def run_england ():
+
+    print("bleep")
+    l='uk-en'
+    t='bank news'
+    c = 'В Лондоне 10 часов утра'
+
+    for i in range(2):
+
+        links_df = pd.DataFrame()
+        try:
+            links_df = get_links(t,l)
+        except:
+            pass
+        print ('длина составляет {}'.format(links_df.shape[0]))
+
+    if l =='ru-ru':
+        text_df = parse_links_ru(links_df)
+    else:
+        text_df = parse_links(links_df)
+
+    concated_df = find_keywords(text_df, links_df)
+    concated_exclude, temp_exclude = to_exclude_text(concated_df)
+    concated_cut = concated_exclude[(concated_exclude[0]!='') & (~concated_exclude[0].isnull())].reset_index(drop=True)
+    concated_sims = del_interntal_duplicates(concated_cut)
+    parsed_df = pd.read_excel('../output/alfa_news/parsed.xlsx')
+    parsed_links = parsed_df['link']
+    concated_sims = concated_sims[~concated_sims['link'].isin(parsed_links)]
+    concated_sims['country'] = c
+    for i, m, c in zip ( concated_sims[0], concated_sims['link'], concated_sims['country']):
+        send_to_telegram(i, m, c)
+        time.sleep(5)
+    parsed_df_new = pd.concat([parsed_df, concated_sims[['link', 'text']]], axis=0)
+    parsed_df_new.to_excel('../output/alfa_news/parsed.xlsx')
+    print ('finished iteration')
+
+
+
+def run_usa ():
+
+    print("bleep")
+    l='us-en'
+    t='bank news'
+    c = 'В Нью - Йорке 10 часов утра'
+
+    for i in range(2):
+
+        links_df = pd.DataFrame()
+        try:
+            links_df = get_links(t,l)
+        except:
+            pass
+        print ('длина составляет {}'.format(links_df.shape[0]))
+
+    if l =='ru-ru':
+        text_df = parse_links_ru(links_df)
+    else:
+        text_df = parse_links(links_df)
+
+    concated_df = find_keywords(text_df, links_df)
+    concated_exclude, temp_exclude = to_exclude_text(concated_df)
+    concated_cut = concated_exclude[(concated_exclude[0]!='') & (~concated_exclude[0].isnull())].reset_index(drop=True)
+    concated_sims = del_interntal_duplicates(concated_cut)
+    parsed_df = pd.read_excel('../output/alfa_news/parsed.xlsx')
+    parsed_links = parsed_df['link']
+    concated_sims = concated_sims[~concated_sims['link'].isin(parsed_links)]
+    concated_sims['country'] = c
+    for i, m, c in zip ( concated_sims[0], concated_sims['link'], concated_sims['country']):
+        send_to_telegram(i, m, c)
+        time.sleep(5)
+    parsed_df_new = pd.concat([parsed_df, concated_sims[['link', 'text']]], axis=0)
+    parsed_df_new.to_excel('../output/alfa_news/parsed.xlsx')
+    print ('finished iteration')
+
+def run_india ():
+
+    print("bleep")
+    l='in-en'
+    t='bank news'
+    c = 'В Индии 10 часов утра'
+
+    for i in range(2):
+
+        links_df = pd.DataFrame()
+        try:
+            links_df = get_links(t,l)
+        except:
+            pass
+        print ('длина составляет {}'.format(links_df.shape[0]))
+
+    if l =='ru-ru':
+        text_df = parse_links_ru(links_df)
+    else:
+        text_df = parse_links(links_df)
+
+    concated_df = find_keywords(text_df, links_df)
+    concated_exclude, temp_exclude = to_exclude_text(concated_df)
+    concated_cut = concated_exclude[(concated_exclude[0]!='') & (~concated_exclude[0].isnull())].reset_index(drop=True)
+    concated_sims = del_interntal_duplicates(concated_cut)
+    parsed_df = pd.read_excel('../output/alfa_news/parsed.xlsx')
+    parsed_links = parsed_df['link']
+    concated_sims = concated_sims[~concated_sims['link'].isin(parsed_links)]
+    concated_sims['country'] = c
+    for i, m, c in zip ( concated_sims[0], concated_sims['link'], concated_sims['country']):
+        send_to_telegram(i, m, c)
+        time.sleep(5)
+    parsed_df_new = pd.concat([parsed_df, concated_sims[['link', 'text']]], axis=0)
+    parsed_df_new.to_excel('../output/alfa_news/parsed.xlsx')
+    print ('finished iteration')
+
+
+## очистить результаты
+# temp = pd.read_excel('../output/alfa_news/parsed.xlsx')
+# temp[:250].to_excel('../output/alfa_news/parsed.xlsx', index=False)
+
+
+import schedule
+import time
+
+schedule.every().day.at("8:00").do(run_russia)
+schedule.every().day.at("11:00").do(run_england)
+schedule.every().day.at("16:00").do(run_usa)
+schedule.every().day.at("5:30").do(run_india)
+
+
+# schedule.every().day.at("19:27").do(run_russia)
+# schedule.every().day.at("19:29").do(run_england)
+# schedule.every().day.at("19:31").do(run_usa)
+# schedule.every().day.at("19:33").do(run_india)
 
 while True:
-    now = datetime.datetime.now()
-    if(now.hour==9):
-        print("bleep")
-        l='ru-ru'
-        t='банк news'
-        c = 'В России 10 часов утра'
-        browser = webdriver.PhantomJS(executable_path='/../usr/local/bin/phantomjs')
-        for i in range(2):
-            try:
-                links_df = get_links(t,l)
-            except:
-                pass
-        if l =='ru-ru':
-            text_df = parse_links_ru(links_df)
-        else:
-            text_df = parse_links(links_df)
-        morph = MorphAnalyzer()
-        russian_stops = stopwords.words('russian')
-        english_stops = stopwords.words('english')
-        concated_df = find_keywords(text_df)
-        concated_exclude, temp_exclude = to_exclude_text(concated_df)
-        concated_cut = concated_exclude[(concated_exclude[0]!='') & (~concated_exclude[0].isnull())].reset_index(drop=True)
-        concated_sims = del_interntal_duplicates(concated_cut)
-        parsed_df = pd.read_excel('../output/alfa_news/parsed.xlsx')
-        parsed_links = parsed_df['link']
-        concated_sims = concated_sims[~concated_sims['link'].isin(parsed_links)]
-        concated_sims['country'] = c
-        for i, m, c in zip ( concated_sims[0], concated_sims['link'], concated_sims['country']):
-            send_to_telegram(i, m, c)
-            time.sleep(5)
-        parsed_df_new = pd.concat([parsed_df, concated_sims[['link', 'text']]], axis=0)
-        parsed_df_new.to_excel('../output/alfa_news/parsed.xlsx')
-        print ('finished iteration')
-    if(now.hour==11):##11
-        print("bloop")
-        l='uk-en'
-        t='bank news'
-        c = 'В Лондоне 10 часов утра'
-        browser = webdriver.PhantomJS(executable_path='/../usr/local/bin/phantomjs')
-        for i in range(2):
-            try:
-                links_df = get_links(t,l)
-            except:
-                pass
-        if l =='ru-ru':
-            text_df = parse_links_ru(links_df)
-        else:
-            text_df = parse_links(links_df)
-        morph = MorphAnalyzer()
-        russian_stops = stopwords.words('russian')
-        english_stops = stopwords.words('english')
-        concated_df = find_keywords(text_df)
-        concated_exclude, temp_exclude = to_exclude_text(concated_df)
-        concated_cut = concated_exclude[(concated_exclude[0]!='') & (~concated_exclude[0].isnull())].reset_index(drop=True)
-        concated_sims = del_interntal_duplicates(concated_cut)
-        parsed_df = pd.read_excel('../output/alfa_news/parsed.xlsx')
-        parsed_links = parsed_df['link']
-        concated_sims = concated_sims[~concated_sims['link'].isin(parsed_links)]
-        concated_sims['country'] = c
-        for i, m, c in zip ( concated_sims[0], concated_sims['link'], concated_sims['country']):
-            send_to_telegram(i, m, c)
-            time.sleep(5)
-        parsed_df_new = pd.concat([parsed_df, concated_sims[['link', 'text']]], axis=0)
-        parsed_df_new.to_excel('../output/alfa_news/parsed.xlsx')
-        print ('finished iteration')
-    if(now.hour==16):
-        print("blarp")
-        l='us-en'
-        t='bank news'
-        c = 'В Нью-Йорке 10 часов утра'
-        browser = webdriver.PhantomJS(executable_path='/../usr/local/bin/phantomjs')
-        for i in range(2):
-            try:
-                links_df = get_links(t,l)
-            except:
-                pass
-        if l =='ru-ru':
-            text_df = parse_links_ru(links_df)
-        else:
-            text_df = parse_links(links_df)
-        morph = MorphAnalyzer()
-        russian_stops = stopwords.words('russian')
-        english_stops = stopwords.words('english')
-        concated_df = find_keywords(text_df)
-        concated_exclude, temp_exclude = to_exclude_text(concated_df)
-        concated_cut = concated_exclude[(concated_exclude[0]!='') & (~concated_exclude[0].isnull())].reset_index(drop=True)
-        concated_sims = del_interntal_duplicates(concated_cut)
-        parsed_df = pd.read_excel('../output/alfa_news/parsed.xlsx')
-        parsed_links = parsed_df['link']
-        concated_sims = concated_sims[~concated_sims['link'].isin(parsed_links)]
-        concated_sims['country'] = c
-        for i, m, c in zip ( concated_sims[0], concated_sims['link'], concated_sims['country']):
-            send_to_telegram(i, m, c)
-            time.sleep(5)
-        parsed_df_new = pd.concat([parsed_df, concated_sims[['link', 'text']]], axis=0)
-        parsed_df_new.to_excel('../output/alfa_news/parsed.xlsx')
-        print ('finished iteration')
-    time.sleep(3599)
+    schedule.run_pending()
+    time.sleep(1)
