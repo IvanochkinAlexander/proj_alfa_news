@@ -199,9 +199,9 @@ def send_to_telegram(i, m, c):
 
     """Send appropriate links to telegram channel"""
 
-    bot = telegram.Bot(token='379005601:AAH1rv3ESXLWTXbn14gnCxW52eeKc4qnw50')
-    chat_id = -1001111732295
-    # chat_id = 169719023
+    bot = telegram.Bot(token='')
+    chat_id = ''
+
     bot.send_message(chat_id=chat_id, text=\
                      'Страна:' + '\n' + '{}'.format(c) + "\n" + \
                      'Tags:' + "\n"+ '{}'.format(i) + "\n" + \
@@ -260,111 +260,6 @@ def del_interntal_duplicates(concated_cut):
         return concated_sims
     except:
         return concated_sims
-
-# to_search = [
-#      'новый продукт',
-#      'новые условия',
-#      'впервые',
-#      'первые на рынок',
-#      'банк представить',
-#      'выводить на рынок',
-#      'любое отделение',
-#      'любой сотрудник',
-#      'любой клиент',
-#      'без очереди',
-#      'любой специалист',
-#      'без ожидание',
-#      'любой время',
-#      'один документ',
-#      'два документа',
-#      'новый технология',
-#      'новый процесс',
-#      'появление возможность',
-#      'становиться быстрее',
-#      'новый возможность',
-#      'инновация',
-#      'сокращение',
-#      'инновационный',
-#      'начинать',
-#      'появиться',
-#      'альфа-банк',
-#      'альфабанк',
-#      'альфа банк'
-#     'тинькофф',
-#     'сбербанк',
-#     'модульбанк',
-#     'газпромбанк',
-#     'точка банк',
-#     'втб',
-#     'райффайзен',
-#     'юникредит',
-#     'фк открытие',
-#     'бинбанк','new product',
-# 'new conditions',
-# 'first on the market',
-# 'bank to present',
-# 'bring to the market',
-# 'any department',
-# 'any employee',
-# 'any customer',
-# 'no turn',
-# 'any specialist',
-# 'no waiting',
-# 'any time',
-# 'one document',
-# 'two documents',
-# 'new technology',
-# 'new process',
-# 'get faster',
-# 'faster',
-# 'better',
-# 'new opportunity',
-# 'innovation',
-# 'innovative',
-# 'start up',
-# 'machine learning',
-# 'biometric technology',
-# 'new technology',
-# 'big data',
-# 'robotic technology',
-# 'bank of america',
-# 'royal bank of canada',
-# 'industrial and commercial bank of china',
-# 'citibank',
-# 'societe generale',
-# 'standard chartered bank',
-# 'sorthern trust',
-# 'maybank islamic',
-# 'ubs',
-# 'citibank',
-# 'bnp paribas',
-# 'jp morgan',
-# 'bank of america',
-# 'ing',
-# 'raiffeisen',
-# 'santander',
-# 'icbc',
-# 'arab bank',
-# 'standard bank',
-# 'lead off'
-# 'premier'
-# 'leading-edge'
-# 'breaking new ground'
-# 'state-of-the-art'
-# 'progressive',
-# 'latest',
-# 'brand-new',
-# 'unique',
-# 'leading',
-# 'machine',
-# 'robotics',
-# 'hi tech',
-# 'scientific',
-# 'digital',
-# 'artificial',
-# 'intelligence'
-# ]
-
 
 to_search = [
 'ДБО',
@@ -663,13 +558,6 @@ schedule.every().day.at("8:00").do(run_russia)
 schedule.every().day.at("11:00").do(run_england)
 schedule.every().day.at("16:00").do(run_usa)
 schedule.every().day.at("5:30").do(run_india)
-# schedule.every().day.at("7:31").do(run_india)
-
-
-# schedule.every().day.at("19:27").do(run_russia)
-# schedule.every().day.at("19:29").do(run_england)
-# schedule.every().day.at("19:31").do(run_usa)
-# schedule.every().day.at("19:33").do(run_india)
 
 while True:
     schedule.run_pending()
